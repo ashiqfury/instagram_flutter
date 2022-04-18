@@ -4,13 +4,15 @@ import 'dart:typed_data';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:instagram_flutter/resources/storage_methods.dart';
+
+import 'package:instagram_flutter/models/user.dart' as model;
 
 class AuthMethods {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  // Signup the user
   Future<String> signupUser({
     required String email,
     required String username,
@@ -34,17 +36,23 @@ class AuthMethods {
         String photoUrl =
             await StorageMethods().uploadToStorage('profilePics', file, false);
 
+        // add user to our database
+        model.User user = model.User(
+          uid: cred.user!.uid,
+          email: email,
+          username: username,
+          bio: bio,
+          password: password,
+          photoUrl: photoUrl,
+          followers: [],
+          followings: [],
+        );
+
         // store user in database
-        await _firestore.collection('users').doc(cred.user!.uid).set({
-          'uid': cred.user!.uid,
-          'username': username,
-          'email': email,
-          'password': password,
-          'bio': bio,
-          'photoUrl': photoUrl,
-          'followers': [],
-          'following': [],
-        });
+        await _firestore
+            .collection('users')
+            .doc(cred.user!.uid)
+            .set(user.toJson());
 
         res = 'User created successfully!';
       }
@@ -54,6 +62,7 @@ class AuthMethods {
     return res;
   }
 
+  // login the user
   Future<String> loginUser({
     required String email,
     required String password,
