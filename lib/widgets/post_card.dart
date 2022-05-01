@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:instagram_flutter/utils/colors.dart';
+import 'package:intl/intl.dart';
 
 class PostCard extends StatelessWidget {
-  const PostCard({Key? key}) : super(key: key);
+  final snap;
+  const PostCard({
+    Key? key,
+    required this.snap,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -19,11 +24,9 @@ class PostCard extends StatelessWidget {
             ).copyWith(right: 0),
             child: Row(
               children: [
-                const CircleAvatar(
+                CircleAvatar(
                   radius: 16,
-                  backgroundImage: NetworkImage(
-                    'https://instagram.fmaa12-2.fna.fbcdn.net/v/t51.2885-19/271701277_676708760142882_7222603007484482991_n.jpg?stp=dst-jpg_s150x150&_nc_ht=instagram.fmaa12-2.fna.fbcdn.net&_nc_cat=106&_nc_ohc=FEAAZKNcQkQAX_xASvU&edm=ALQROFkBAAAA&ccb=7-4&oh=00_AT-_wmLCdgbvVi7tlsGhJSNJJ53VeERmCNui4EZUex7X5A&oe=6269069E&_nc_sid=30a2ef',
-                  ),
+                  backgroundImage: NetworkImage(snap['profImage']),
                 ),
                 Expanded(
                   child: Padding(
@@ -31,10 +34,10 @@ class PostCard extends StatelessWidget {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
+                      children: [
                         Text(
-                          'anawzir___',
-                          style: TextStyle(
+                          snap['username'],
+                          style: const TextStyle(
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -80,7 +83,7 @@ class PostCard extends StatelessWidget {
             height: MediaQuery.of(context).size.height * 0.35,
             width: double.infinity,
             child: Image.network(
-              'https://instagram.fmaa12-3.fna.fbcdn.net/v/t51.2885-15/277906294_368761708478467_6917862117072200814_n.webp?stp=c209.0.662.662a_dst-webp_e35_s320x320&cb=9ad74b5e-95d2b877&_nc_ht=instagram.fmaa12-3.fna.fbcdn.net&_nc_cat=107&_nc_ohc=wxWAeMIzq-kAX8RrZsG&edm=ABfd0MgBAAAA&ccb=7-4&oh=00_AT99OJSKCgW1I7myk97U7RwWmyFHMEIvUgV6fc2kcd8wSQ&oe=626A7DC8&_nc_sid=7bff83',
+              snap['postUrl'],
               fit: BoxFit.cover,
             ),
           ),
@@ -124,7 +127,7 @@ class PostCard extends StatelessWidget {
                       .subtitle2!
                       .copyWith(fontWeight: FontWeight.w800),
                   child: Text(
-                    '2,407 likes',
+                    '${snap['likes'].length} likes',
                     style: Theme.of(context).textTheme.bodyText2,
                   ),
                 ),
@@ -132,19 +135,17 @@ class PostCard extends StatelessWidget {
                   padding: const EdgeInsets.only(top: 8),
                   width: double.infinity,
                   child: RichText(
-                    text: const TextSpan(
-                      style: TextStyle(color: primaryColor),
+                    text: TextSpan(
+                      style: const TextStyle(color: primaryColor),
                       children: [
                         TextSpan(
-                          text: 'anawzir___',
-                          style: TextStyle(
+                          text: '${snap['username']}  ',
+                          style: const TextStyle(
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         TextSpan(
-                          text:
-                              '  yoi papaaaww...! you will always present in each and every project I am building.. 😘',
-                          style: TextStyle(),
+                          text: snap['description'],
                         ),
                       ],
                     ),
@@ -165,9 +166,11 @@ class PostCard extends StatelessWidget {
                 ),
                 Container(
                   padding: const EdgeInsets.only(bottom: 4),
-                  child: const Text(
-                    '5 minutes ago',
-                    style: TextStyle(
+                  child: Text(
+                    DateFormat.yMMMd().format(
+                      snap['datePublished'].toDate(),
+                    ),
+                    style: const TextStyle(
                       color: secondaryColor,
                       // fontSize: 16,
                     ),
